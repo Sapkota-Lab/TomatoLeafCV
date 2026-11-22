@@ -313,12 +313,13 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    test_image = Path(__file__).resolve().parent.joinpath(
-        "images", "BGV004584", "BGV004584-1-F0001_overlay.png"
-    )
+    test_image = Path("test_overlay.png")
     test_results, test_candidates, test_groups = analyze(load_plant_mask(test_image))
     #Display the analyzed preview
     analyzed_preview = create_preview(load_plant_mask(test_image), test_candidates, test_groups)
     cv2.imshow("Analyzed Preview", analyzed_preview)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    #Save the analyzed preview
+    test_saved_preview = Path("test_architecture.png")
+    cv2.imwrite(str(test_saved_preview), analyzed_preview)

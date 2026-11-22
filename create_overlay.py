@@ -16,7 +16,7 @@ def create_leaf_mask(image: np.ndarray) -> np.ndarray:
         raise ValueError("Expected a color image with three BGR channels")
 
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    green_pixels = cv2.inRange(hsv_image, (25, 35, 40), (100, 255, 255))
+    green_pixels = cv2.inRange(hsv_image, (25, 60, 40), (100, 255, 255))
     component_count, labels, stats, _ = cv2.connectedComponentsWithStats(
         green_pixels, connectivity=8
     )
@@ -160,5 +160,5 @@ if __name__ == "__main__":
     image = cv2.imread(str(test_image), cv2.IMREAD_COLOR)
     if image is None:
         raise FileNotFoundError(test_image)
-    test_saved_image = Path(r"images\BGV004584\BGV004584-1-F0001_overlay.png")
+    test_saved_image = Path(r"test_overlay.png")
     cv2.imwrite(str(test_saved_image), create_leaf_mask(image))
