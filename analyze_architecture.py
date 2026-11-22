@@ -35,7 +35,6 @@ def load_plant_mask(path: Path) -> np.ndarray:
 
 
 def leaflet_candidates(mask: np.ndarray) -> list[dict]:
-    """Split broad regions at narrow connections; these are only candidates."""
     plant_area = cv2.countNonZero(mask)
     size = max(3, int(round(max(mask.shape) * 0.011)))
     size += 1 - size % 2
@@ -85,7 +84,6 @@ def leaflet_candidates(mask: np.ndarray) -> list[dict]:
 
 
 def skeleton_graph(mask: np.ndarray):
-    """Build a reduced-resolution skeleton graph and a base-to-tip path."""
     height, width = mask.shape
     scale = min(1.0, 1000 / max(height, width))
     size = (max(1, round(width * scale)), max(1, round(height * scale)))
@@ -188,14 +186,6 @@ def analyze(mask: np.ndarray) -> tuple[dict, list[dict], list[dict]]:
         candidate["branch"] = group["id"]
 
     results = {
-        "warning": (
-            "Experimental estimates, not validated measurements. Assumes an upright "
-            "plant with its base at the bottom. Only the largest connected foreground "
-            "component is analyzed, so disconnected leaflets may be lost and a ruler "
-            "touching the plant will remain. Touching leaflets, stems included in "
-            "candidate contours, and incorrect stem paths can change all counts and "
-            "circularities. Unassigned leaflets have a null branch_id."
-        ),
         "branch_count_estimate": len(groups),
         "leaflet_count_estimate": len(candidates),
         "overall_mean_circularity": float(
