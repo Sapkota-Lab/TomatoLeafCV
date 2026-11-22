@@ -313,3 +313,8 @@ if __name__ == "__main__":
     #Save the analyzed preview
     test_saved_preview = Path("test_architecture.png")
     cv2.imwrite(str(test_saved_preview), analyzed_preview)
+    #Write the numeric results to a JSON file
+    test_saved_results = Path("test_architecture_results.json")
+    with open(test_saved_results, "w") as f:
+        json.dump(test_results, f, indent=2)
+    print(json.dumps(test_results, indent=2))

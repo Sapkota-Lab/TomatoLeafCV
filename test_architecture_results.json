@@ -1,0 +1,406 @@
+{
+  "branch_count_estimate": 19,
+  "leaflet_count_estimate": 36,
+  "overall_mean_circularity": 0.36198189623220006,
+  "branches": [
+    {
+      "id": 1,
+      "leaflet_ids": [
+        2
+      ],
+      "mean_circularity": 0.42946147503377613
+    },
+    {
+      "id": 2,
+      "leaflet_ids": [
+        3
+      ],
+      "mean_circularity": 0.4327658198590031
+    },
+    {
+      "id": 3,
+      "leaflet_ids": [
+        4,
+        5,
+        8
+      ],
+      "mean_circularity": 0.3478130766581777
+    },
+    {
+      "id": 4,
+      "leaflet_ids": [
+        7
+      ],
+      "mean_circularity": 0.1320119836987081
+    },
+    {
+      "id": 5,
+      "leaflet_ids": [
+        9
+      ],
+      "mean_circularity": 0.43277850077612817
+    },
+    {
+      "id": 6,
+      "leaflet_ids": [
+        10
+      ],
+      "mean_circularity": 0.43235551767634434
+    },
+    {
+      "id": 7,
+      "leaflet_ids": [
+        11
+      ],
+      "mean_circularity": 0.2097865000835253
+    },
+    {
+      "id": 8,
+      "leaflet_ids": [
+        12,
+        16
+      ],
+      "mean_circularity": 0.3757012772750408
+    },
+    {
+      "id": 9,
+      "leaflet_ids": [
+        13,
+        20,
+        22
+      ],
+      "mean_circularity": 0.44626321179616024
+    },
+    {
+      "id": 10,
+      "leaflet_ids": [
+        14,
+        19,
+        23
+      ],
+      "mean_circularity": 0.3887823848751187
+    },
+    {
+      "id": 11,
+      "leaflet_ids": [
+        15,
+        17
+      ],
+      "mean_circularity": 0.3494249591898365
+    },
+    {
+      "id": 12,
+      "leaflet_ids": [
+        18
+      ],
+      "mean_circularity": 0.38092435694987614
+    },
+    {
+      "id": 13,
+      "leaflet_ids": [
+        25
+      ],
+      "mean_circularity": 0.354112896525517
+    },
+    {
+      "id": 14,
+      "leaflet_ids": [
+        26
+      ],
+      "mean_circularity": 0.3185845129413684
+    },
+    {
+      "id": 15,
+      "leaflet_ids": [
+        27,
+        28,
+        31
+      ],
+      "mean_circularity": 0.38818838288983426
+    },
+    {
+      "id": 16,
+      "leaflet_ids": [
+        29
+      ],
+      "mean_circularity": 0.2986882987662644
+    },
+    {
+      "id": 17,
+      "leaflet_ids": [
+        30,
+        32,
+        33
+      ],
+      "mean_circularity": 0.4119607868014197
+    },
+    {
+      "id": 18,
+      "leaflet_ids": [
+        35
+      ],
+      "mean_circularity": 0.2534842079272192
+    },
+    {
+      "id": 19,
+      "leaflet_ids": [
+        36
+      ],
+      "mean_circularity": 0.49796654939967966
+    }
+  ],
+  "leaflets": [
+    {
+      "id": 1,
+      "branch_id": null,
+      "area_pixels": 76522.5,
+      "perimeter_pixels": 1884.81953394413,
+      "circularity": 0.2706820555864914
+    },
+    {
+      "id": 2,
+      "branch_id": 1,
+      "area_pixels": 6921.5,
+      "perimeter_pixels": 450.03152549266815,
+      "circularity": 0.42946147503377613
+    },
+    {
+      "id": 3,
+      "branch_id": 2,
+      "area_pixels": 3268.0,
+      "perimeter_pixels": 308.04877042770386,
+      "circularity": 0.4327658198590031
+    },
+    {
+      "id": 4,
+      "branch_id": 3,
+      "area_pixels": 5415.5,
+      "perimeter_pixels": 347.1787132024765,
+      "circularity": 0.5646017837977434
+    },
+    {
+      "id": 5,
+      "branch_id": 3,
+      "area_pixels": 52255.0,
+      "perimeter_pixels": 1687.4398102760315,
+      "circularity": 0.23061159229810935
+    },
+    {
+      "id": 6,
+      "branch_id": null,
+      "area_pixels": 1804.0,
+      "perimeter_pixels": 231.48022890090942,
+      "circularity": 0.42307619609946073
+    },
+    {
+      "id": 7,
+      "branch_id": 4,
+      "area_pixels": 64143.5,
+      "perimeter_pixels": 2471.0104397535324,
+      "circularity": 0.1320119836987081
+    },
+    {
+      "id": 8,
+      "branch_id": 3,
+      "area_pixels": 4663.5,
+      "perimeter_pixels": 485.88939011096954,
+      "circularity": 0.24822585387868015
+    },
+    {
+      "id": 9,
+      "branch_id": 5,
+      "area_pixels": 5258.0,
+      "perimeter_pixels": 390.73506212234497,
+      "circularity": 0.43277850077612817
+    },
+    {
+      "id": 10,
+      "branch_id": 6,
+      "area_pixels": 15962.0,
+      "perimeter_pixels": 681.1269783973694,
+      "circularity": 0.43235551767634434
+    },
+    {
+      "id": 11,
+      "branch_id": 7,
+      "area_pixels": 22087.0,
+      "perimeter_pixels": 1150.2295715808868,
+      "circularity": 0.2097865000835253
+    },
+    {
+      "id": 12,
+      "branch_id": 8,
+      "area_pixels": 5086.5,
+      "perimeter_pixels": 563.9137753248215,
+      "circularity": 0.20100344713220406
+    },
+    {
+      "id": 13,
+      "branch_id": 9,
+      "area_pixels": 44757.0,
+      "perimeter_pixels": 1337.8519358634949,
+      "circularity": 0.31423512595099545
+    },
+    {
+      "id": 14,
+      "branch_id": 10,
+      "area_pixels": 13093.0,
+      "perimeter_pixels": 594.357426404953,
+      "circularity": 0.46575083788249316
+    },
+    {
+      "id": 15,
+      "branch_id": 11,
+      "area_pixels": 1567.5,
+      "perimeter_pixels": 233.52185904979706,
+      "circularity": 0.36121213721466205
+    },
+    {
+      "id": 16,
+      "branch_id": 8,
+      "area_pixels": 5922.0,
+      "perimeter_pixels": 367.7056245803833,
+      "circularity": 0.5503991074178776
+    },
+    {
+      "id": 17,
+      "branch_id": 11,
+      "area_pixels": 3346.5,
+      "perimeter_pixels": 352.9188276529312,
+      "circularity": 0.33763778116501103
+    },
+    {
+      "id": 18,
+      "branch_id": 12,
+      "area_pixels": 1233.5,
+      "perimeter_pixels": 201.722869515419,
+      "circularity": 0.38092435694987614
+    },
+    {
+      "id": 19,
+      "branch_id": 10,
+      "area_pixels": 75986.0,
+      "perimeter_pixels": 1688.2438521385193,
+      "circularity": 0.33502181997092867
+    },
+    {
+      "id": 20,
+      "branch_id": 9,
+      "area_pixels": 1054.5,
+      "perimeter_pixels": 141.9827550649643,
+      "circularity": 0.6573327189450993
+    },
+    {
+      "id": 21,
+      "branch_id": null,
+      "area_pixels": 5298.0,
+      "perimeter_pixels": 450.4751765727997,
+      "circularity": 0.3280802518124975
+    },
+    {
+      "id": 22,
+      "branch_id": 9,
+      "area_pixels": 21854.5,
+      "perimeter_pixels": 864.790972828865,
+      "circularity": 0.3672217904923861
+    },
+    {
+      "id": 23,
+      "branch_id": 10,
+      "area_pixels": 10863.5,
+      "perimeter_pixels": 611.0853482484818,
+      "circularity": 0.3655744967719343
+    },
+    {
+      "id": 24,
+      "branch_id": null,
+      "area_pixels": 5679.0,
+      "perimeter_pixels": 454.96045780181885,
+      "circularity": 0.3447739370533399
+    },
+    {
+      "id": 25,
+      "branch_id": 13,
+      "area_pixels": 8956.5,
+      "perimeter_pixels": 563.7716399431229,
+      "circularity": 0.354112896525517
+    },
+    {
+      "id": 26,
+      "branch_id": 14,
+      "area_pixels": 12834.5,
+      "perimeter_pixels": 711.5117543935776,
+      "circularity": 0.3185845129413684
+    },
+    {
+      "id": 27,
+      "branch_id": 15,
+      "area_pixels": 6806.5,
+      "perimeter_pixels": 497.8305150270462,
+      "circularity": 0.34512044334400677
+    },
+    {
+      "id": 28,
+      "branch_id": 15,
+      "area_pixels": 42696.0,
+      "perimeter_pixels": 1139.2001340389252,
+      "circularity": 0.4134252512766465
+    },
+    {
+      "id": 29,
+      "branch_id": 16,
+      "area_pixels": 2624.5,
+      "perimeter_pixels": 332.29141104221344,
+      "circularity": 0.2986882987662644
+    },
+    {
+      "id": 30,
+      "branch_id": 17,
+      "area_pixels": 7278.5,
+      "perimeter_pixels": 439.88939011096954,
+      "circularity": 0.4726773325746221
+    },
+    {
+      "id": 31,
+      "branch_id": 15,
+      "area_pixels": 17762.5,
+      "perimeter_pixels": 741.4528793096542,
+      "circularity": 0.40601945404884954
+    },
+    {
+      "id": 32,
+      "branch_id": 17,
+      "area_pixels": 48570.0,
+      "perimeter_pixels": 1293.0235087871552,
+      "circularity": 0.365060736427852
+    },
+    {
+      "id": 33,
+      "branch_id": 17,
+      "area_pixels": 13342.0,
+      "perimeter_pixels": 648.9259679317474,
+      "circularity": 0.398144291401785
+    },
+    {
+      "id": 34,
+      "branch_id": null,
+      "area_pixels": 19594.5,
+      "perimeter_pixels": 1631.2072743177414,
+      "circularity": 0.09253920217811847
+    },
+    {
+      "id": 35,
+      "branch_id": 18,
+      "area_pixels": 15147.0,
+      "perimeter_pixels": 866.5483322143555,
+      "circularity": 0.2534842079272192
+    },
+    {
+      "id": 36,
+      "branch_id": 19,
+      "area_pixels": 12833.5,
+      "perimeter_pixels": 569.0853482484818,
+      "circularity": 0.49796654939967966
+    }
+  ]
+}
