@@ -2,6 +2,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Optional
 
 import cv2
 import numpy as np
@@ -140,12 +141,23 @@ def skeleton_graph(mask: np.ndarray):
     return points, scale, axis, root_distance, sources
 
 
-def analyze(mask: np.ndarray) -> tuple[dict, list[dict], list[dict]]:
+def analyze(
+    mask: np.ndarray, color_image: Optional[np.ndarray] = None
+) -> tuple[dict, list[dict], list[dict]]:
+    if color_image is not None and (
+        color_image.ndim != 3 or color_image.shape[2] != 3
+        or color_image.shape[:2] != mask.shape
+    ):
+        raise ValueError("The color image must have three channels and match the mask size")
+
     candidates = leaflet_candidates(mask)
     points, scale, axis, root_distance, sources = skeleton_graph(mask)
     tree = cKDTree(points)
     axis_nodes = set(axis.tolist())
     axis_points = points[axis]
+    base_to_tip = axis[::-1]
+    steps = np.linalg.norm(np.diff(points[base_to_tip], axis=0), axis=1) / scale
+    axis_positions = dict(zip(base_to_tip, np.r_[0.0, np.cumsum(steps)]))
     groups = []
     axis_tolerance = max(3.0, (axis_points[:, 0].max() - axis_points[:, 0].min()) * 0.02)
 
@@ -178,6 +190,7 @@ def analyze(mask: np.ndarray) -> tuple[dict, list[dict], list[dict]]:
                 "id": len(groups) + 1,
                 "side": side,
                 "position": position,
+                "axis_position": float(axis_positions[source]),
                 "junction": (int(junction_x / scale), int(junction_y / scale)),
                 "leaflets": [],
             }
@@ -185,15 +198,52 @@ def analyze(mask: np.ndarray) -> tuple[dict, list[dict], list[dict]]:
         group["leaflets"].append(candidate)
         candidate["branch"] = group["id"]
 
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contour = max(contours, key=cv2.contourArea)
+    area = cv2.contourArea(contour)
+    perimeter = cv2.arcLength(contour, True)
+    if area <= 0 or perimeter <= 0:
+        raise ValueError("The plant outline has no measurable area or perimeter")
+
+    ordered_groups = sorted(groups, key=lambda group: group["axis_position"])
+    branch_spacings = [
+        {
+            "from_branch_id": first["id"],
+            "to_branch_id": second["id"],
+            "distance_pixels": second["axis_position"] - first["axis_position"],
+        }
+        for first, second in zip(ordered_groups, ordered_groups[1:])
+    ]
+    main_axis_color = None
+    if color_image is not None:
+        coords = np.rint(axis_points / scale).astype(int)
+        coords[:, 0] = np.clip(coords[:, 0], 0, mask.shape[0] - 1)
+        coords[:, 1] = np.clip(coords[:, 1], 0, mask.shape[1] - 1)
+        coords = coords[mask[coords[:, 0], coords[:, 1]] != 0]
+        if len(coords) == 0:
+            raise ValueError("No foreground pixels found along the traced main axis")
+        mean_bgr = np.mean(color_image[coords[:, 0], coords[:, 1]], axis=0)
+        main_axis_color = {
+            "mean_rgb": [float(value) for value in mean_bgr[::-1]],
+            "sample_count": len(coords),
+        }
+
     results = {
         "branch_count_estimate": len(groups),
         "leaflet_count_estimate": len(candidates),
+        "plant_outline_circularity": float(4 * np.pi * area / (perimeter * perimeter)),
+        "main_axis_length_pixels": float(sum(steps)),
+        "main_axis_color": main_axis_color,
+        "consecutive_branch_spacings": branch_spacings,
         "overall_mean_circularity": float(
             np.mean([candidate["circularity"] for candidate in candidates])
         ),
         "branches": [
             {
                 "id": group["id"],
+                "side": group["side"],
+                "junction_xy_pixels": group["junction"],
+                "distance_from_base_pixels": group["axis_position"],
                 "leaflet_ids": [leaflet["id"] for leaflet in group["leaflets"]],
                 "mean_circularity": float(
                     np.mean([leaflet["circularity"] for leaflet in group["leaflets"]])
@@ -213,6 +263,29 @@ def analyze(mask: np.ndarray) -> tuple[dict, list[dict], list[dict]]:
         ],
     }
     return results, candidates, groups
+
+
+def create_architecture_drawing(mask: np.ndarray, groups: list[dict]) -> np.ndarray:
+    points, scale, axis, _, _ = skeleton_graph(mask)
+    height, width = mask.shape
+    reduced = np.zeros(
+        (max(1, round(height * scale)), max(1, round(width * scale)), 3),
+        dtype=np.uint8,
+    )
+    reduced[points[:, 0], points[:, 1]] = (255, 255, 255)
+    drawing = cv2.resize(reduced, (width, height), interpolation=cv2.INTER_NEAREST)
+    axis_xy = np.rint(points[axis, ::-1] / scale).astype(np.int32)
+    cv2.polylines(drawing, [axis_xy], False, (0, 0, 255), max(1, round(2 / scale)))
+    text_scale = max(0.4, max(mask.shape) / 2800)
+    thickness = max(1, round(text_scale * 2))
+    for group in groups:
+        x, y = group["junction"]
+        cv2.circle(drawing, (x, y), 3 * thickness, (0, 255, 0), -1)
+        cv2.putText(
+            drawing, f"B{group['id']}", (x + 4 * thickness, y),
+            cv2.FONT_HERSHEY_SIMPLEX, text_scale, (0, 255, 0), thickness,
+        )
+    return drawing
 
 
 def create_preview(mask: np.ndarray, candidates: list[dict], groups: list[dict]) -> np.ndarray:
@@ -281,21 +354,51 @@ def main() -> int:
             "The preview outlines candidate leaflets in red. L numbers identify "
             "leaflets, B numbers identify estimated branches, and green dots mark "
             "estimated branch junctions. Press any key to close the preview. "
-            "Leaflet circularity is 4*pi*area/perimeter^2."
+            "Circularity is 4*pi*area/perimeter^2. Measurements are in pixels."
         ),
     )
-    parser.add_argument("mask", type=Path, help="Binary PNG: white plant on black")
+    parser.add_argument(
+        "mask", type=Path, nargs="?", default=Path("test_overlay.png"),
+        help="Binary PNG: white plant on black (default: test_overlay.png)",
+    )
     parser.add_argument(
         "--no-preview", action="store_true",
         help="Print results without opening a window",
     )
+    parser.add_argument(
+        "--image", type=Path,
+        help="Original color image aligned with the mask, for main-axis color",
+    )
+    parser.add_argument(
+        "--drawing", type=Path,
+        help="Save a skeleton drawing with the main axis and branch junctions",
+    )
+    legacy_mode = len(sys.argv) == 1
     args = parser.parse_args()
     try:
         mask = load_plant_mask(args.mask)
-        results, candidates, groups = analyze(mask)
-        print(json.dumps(results, indent=2))
+        image = None
+        if args.image is not None:
+            image = cv2.imread(str(args.image), cv2.IMREAD_COLOR)
+            if image is None:
+                raise ValueError(f"Could not read color image: {args.image}")
+        results, candidates, groups = analyze(mask, image)
+        if args.drawing is not None:
+            if args.drawing.resolve() in {
+                path.resolve() for path in (args.mask, args.image) if path is not None
+            }:
+                raise ValueError("The drawing path must not overwrite an input image")
+            if not cv2.imwrite(str(args.drawing), create_architecture_drawing(mask, groups)):
+                raise OSError(f"Could not write architecture drawing: {args.drawing}")
         if not args.no_preview:
-            show_preview(create_preview(mask, candidates, groups))
+            preview = create_preview(mask, candidates, groups)
+            show_preview(preview)
+            if legacy_mode:
+                if not cv2.imwrite("test_architecture.png", preview):
+                    raise OSError("Could not write test_architecture.png")
+                with Path("test_architecture_results.json").open("w") as output:
+                    json.dump(results, output, indent=2)
+        print(json.dumps(results, indent=2))
     except (ValueError, OSError, cv2.error) as error:
         print(f"Analysis failed: {error}", file=sys.stderr)
         return 1
@@ -303,18 +406,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    test_image = Path("test_overlay.png")
-    test_results, test_candidates, test_groups = analyze(load_plant_mask(test_image))
-    #Display the analyzed preview
-    analyzed_preview = create_preview(load_plant_mask(test_image), test_candidates, test_groups)
-    cv2.imshow("Analyzed Preview", analyzed_preview)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    #Save the analyzed preview
-    test_saved_preview = Path("test_architecture.png")
-    cv2.imwrite(str(test_saved_preview), analyzed_preview)
-    #Write the numeric results to a JSON file
-    test_saved_results = Path("test_architecture_results.json")
-    with open(test_saved_results, "w") as f:
-        json.dump(test_results, f, indent=2)
-    print(json.dumps(test_results, indent=2))
+    sys.exit(main())
