@@ -1,18 +1,33 @@
 # Architecture analysis
 
+Use `main.py` to select an operation:
+
+```text
+python main.py --help
+python main.py overlay --help
+python main.py architecture --help
+python main.py overlay images\leaf.tif -o overlay.png
+```
+
+Reusable image processing code lives in `tomatoleafcv`: `segmentation.py`
+builds leaf masks, `overlay.py` creates colored overlays, and the
+`architecture` package separates mask loading, leaflet detection, skeleton
+tracing, measurements, and drawing. The original scripts and their imports
+remain available.
+
 Run the analysis on a binary PNG with the plant in white and the background in
 black:
 
 ```text
-python analyze_architecture.py test_overlay.png --no-preview --drawing architecture.png
-python analyze_architecture.py test_overlay.png --image original_photo.tif --drawing architecture.png
+python main.py architecture test_overlay.png --no-preview --drawing architecture.png
+python main.py architecture test_overlay.png --image original_photo.tif --drawing architecture.png
 ```
 
 The program prints JSON. Without `--no-preview`, it also displays the existing
 leaflet preview. `--drawing` saves a separate black-background drawing: white
 is the plant skeleton, red is the estimated main axis, and green dots and
-labels identify estimated branch junctions. Running the script with no
-arguments retains the existing test-image workflow, including saving
+labels identify estimated branch junctions. Running `analyze_architecture.py`
+with no arguments retains the existing test-image workflow, including saving
 `test_architecture.png` and `test_architecture_results.json`.
 
 The main axis is the skeleton path from the lowest to the highest skeleton
